@@ -1,6 +1,7 @@
 import concurrent.futures
 import random
 import keyboard
+import time
 import pydirectinput
 import pyautogui
 import TwitchPlays_Connection
@@ -42,6 +43,7 @@ message_queue = []
 thread_pool = concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS)
 active_tasks = []
 pyautogui.FAILSAFE = False
+
 
 ##########################################################
 
@@ -104,21 +106,45 @@ def handle_message(message):
         
         if msg == "raze":
             HoldAndReleaseKey(NUMPAD_3, 0.7)
-
-        if msg == "aim up":
-            pydirectinput.moveRel(0, -30, relative=True)
+        
+        if msg == "laugh":
+            HoldAndReleaseKey(NUMPAD_4, 0.7)
+        
+        if msg == "defuse":
+            HoldAndReleaseKey(NUMPAD_5, 0.7)
 
         if msg == "crouch":
             HoldAndReleaseKey(LEFT_CONTROL, 5)
 
-        if msg == "escape":
-            HoldAndReleaseKey(ESC, 0.7)
-
         if msg == "vc":
-            HoldAndReleaseKey(V, 5)
+            HoldAndReleaseKey(V, 10)
 
         if msg == "pistol":
             HoldAndReleaseKey(TWO, 0.7)
+        
+        if msg == "knife":
+            HoldAndReleaseKey(THREE, 0.7)
+        
+        if msg == "use ability 1":
+            HoldAndReleaseKey(C, 0.7)
+            time.sleep(0.3)
+            pydirectinput.mouseDown(button="left")
+            time.sleep(0.25)
+            pydirectinput.mouseUp(button="left")
+
+        if msg == "use ability 2":
+            HoldAndReleaseKey(LEFT_ALT, 0.7)
+            time.sleep(0.3)
+            pydirectinput.mouseDown(button="left")
+            time.sleep(0.25)
+            pydirectinput.mouseUp(button="left")
+
+        if msg == "use ability 3":
+            HoldAndReleaseKey(E, 0.7)
+            time.sleep(0.3)
+            pydirectinput.mouseDown(button="left")
+            time.sleep(0.25)
+            pydirectinput.mouseUp(button="left")
 
         ####################################
         ####################################
@@ -127,8 +153,17 @@ def handle_message(message):
         print("Encountered exception: " + str(e))
 
 
-while True:
+def drop_weapon_every_interval(timer_duration):
+    while True:
+        # Sleep for the specified duration
+        time.sleep(timer_duration)
 
+        print("Dropping gun")
+        HoldAndReleaseKey(G, 0.7)
+
+dropbool = False
+
+while True:
     active_tasks = [t for t in active_tasks if not t.done()]
 
     #Check for new messages
@@ -149,12 +184,21 @@ while True:
             # Pop the messages we want off the front of the queue
             messages_to_handle = message_queue[0:n]
             del message_queue[0:n]
-            last_time = time.time();
+            last_time = time.time()
 
     # If user presses Shift+Backspace, automatically end the program
     if keyboard.is_pressed('shift+backspace'):
         exit()
 
+    if keyboard.is_pressed('shift+space'):
+        print("activating dropping sequence")
+        dropbool = True
+
+    if dropbool:
+        print("doing this shit")
+        active_tasks.append(thread_pool.submit(drop_weapon_every_interval, 10))
+        dropbool = False
+    
     if not messages_to_handle:
         continue
     else:
