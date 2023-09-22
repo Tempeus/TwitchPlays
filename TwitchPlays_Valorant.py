@@ -4,6 +4,11 @@ import keyboard
 import time
 import pydirectinput
 import pyautogui
+from gtts import gTTS
+import playsound
+import os
+import inspirobot
+
 import TwitchPlays_Connection
 from TwitchPlays_KeyCodes import *
 
@@ -61,6 +66,14 @@ else:
     t = TwitchPlays_Connection.YouTube()
     t.youtube_connect(YOUTUBE_CHANNEL_ID, YOUTUBE_STREAM_URL)
 
+def text_to_speech(msg):
+        name = f"temp{time.time()}.mp3"
+        tts = gTTS(msg)
+        tts.save(name)
+        time.sleep(1) 
+        playsound.playsound(name)
+        os.remove(name)
+
 def handle_message(message):
     try:
         msg = message['message'].lower()
@@ -82,18 +95,26 @@ def handle_message(message):
 
         #Drop Gun
         if msg == "drop": 
+            text_to_speech("Dropping Gun")
             HoldAndReleaseKey(G, 1)
+
+        if msg == "inspire me":
+            flow = inspirobot.flow()  # Generate a flow object
+            text_to_speech(flow[0].text)
 
         #ULT
         if msg == "ult":
+            text_to_speech("Using Ultimate")
             HoldAndReleaseKey(X, 1)
 
         # Press the spacebar for 0.7 seconds
         if msg == "jump": 
+            text_to_speech("Initiating Jumping Sequence")
             HoldAndReleaseKey(SPACE, 0.7)
 
         # Press the left mouse button down for 1 second, then release it
         if msg == "shoot": 
+            text_to_speech("Shooting your gun")
             pydirectinput.mouseDown(button="left")
             time.sleep(1)
             pydirectinput.mouseUp(button="left")
@@ -114,6 +135,7 @@ def handle_message(message):
             HoldAndReleaseKey(NUMPAD_5, 0.7)
 
         if msg == "crouch":
+            text_to_speech("Initiating Crouching Sequence")
             HoldAndReleaseKey(LEFT_CONTROL, 5)
 
         if msg == "vc":
@@ -121,11 +143,16 @@ def handle_message(message):
 
         if msg == "pistol":
             HoldAndReleaseKey(TWO, 0.7)
+
+        if msg == "reload":
+            text_to_speech("Initiating Reloading Sequence")
+            HoldAndReleaseKey(R, 0.7)
         
         if msg == "knife":
             HoldAndReleaseKey(THREE, 0.7)
         
         if msg == "use ability 1":
+            text_to_speech("Initiating Ability Usage Sequence")
             HoldAndReleaseKey(C, 0.7)
             time.sleep(0.3)
             pydirectinput.mouseDown(button="left")
@@ -133,6 +160,7 @@ def handle_message(message):
             pydirectinput.mouseUp(button="left")
 
         if msg == "use ability 2":
+            text_to_speech("Initiating Ability Usage Sequence")
             HoldAndReleaseKey(LEFT_ALT, 0.7)
             time.sleep(0.3)
             pydirectinput.mouseDown(button="left")
@@ -140,11 +168,21 @@ def handle_message(message):
             pydirectinput.mouseUp(button="left")
 
         if msg == "use ability 3":
+            text_to_speech("Initiating Ability Usage Sequence")
             HoldAndReleaseKey(E, 0.7)
             time.sleep(0.3)
             pydirectinput.mouseDown(button="left")
             time.sleep(0.25)
             pydirectinput.mouseUp(button="left")
+
+        if msg == "slippery hands":
+            text_to_speech("Initiating Slippery Hands Sequence")
+            drop_weapon_every_interval(10)
+
+        if msg == "reload paranoia":
+            text_to_speech("Initiating reloading paranoia")
+            reload_paranoia(5)
+
 
         ####################################
         ####################################
@@ -154,12 +192,19 @@ def handle_message(message):
 
 
 def drop_weapon_every_interval(timer_duration):
-    while True:
+    for i in range(10):
         # Sleep for the specified duration
         time.sleep(timer_duration)
 
         print("Dropping gun")
         HoldAndReleaseKey(G, 0.7)
+
+def reload_paranoia(timer_duration):
+    for i in range(20):
+        time.sleep(timer_duration)
+
+        print("Reloading")
+        HoldAndReleaseKey(R, 0.7)
 
 dropbool = False
 
@@ -189,15 +234,6 @@ while True:
     # If user presses Shift+Backspace, automatically end the program
     if keyboard.is_pressed('shift+backspace'):
         exit()
-
-    if keyboard.is_pressed('shift+space'):
-        print("activating dropping sequence")
-        dropbool = True
-
-    if dropbool:
-        print("doing this shit")
-        active_tasks.append(thread_pool.submit(drop_weapon_every_interval, 10))
-        dropbool = False
     
     if not messages_to_handle:
         continue
