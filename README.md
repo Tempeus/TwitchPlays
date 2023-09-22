@@ -19,6 +19,7 @@ inspire me
 reload
 slippery hands
 reload paranoia
+random
 
 # Commands
 drop
@@ -41,3 +42,4 @@ use ability 2
 use ability 3
 slippery hands
 reload paranoia
+random

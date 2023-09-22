@@ -106,6 +106,10 @@ def handle_message(message):
         if msg == "ult":
             text_to_speech("Using Ultimate")
             HoldAndReleaseKey(X, 1)
+            time.sleep(0.5)
+            pydirectinput.mouseDown(button="left")
+            time.sleep(0.25)
+            pydirectinput.mouseUp(button="left")
 
         # Press the spacebar for 0.7 seconds
         if msg == "jump": 
@@ -154,7 +158,7 @@ def handle_message(message):
         if msg == "use ability 1":
             text_to_speech("Initiating Ability Usage Sequence")
             HoldAndReleaseKey(C, 0.7)
-            time.sleep(0.3)
+            time.sleep(0.5)
             pydirectinput.mouseDown(button="left")
             time.sleep(0.25)
             pydirectinput.mouseUp(button="left")
@@ -162,7 +166,7 @@ def handle_message(message):
         if msg == "use ability 2":
             text_to_speech("Initiating Ability Usage Sequence")
             HoldAndReleaseKey(LEFT_ALT, 0.7)
-            time.sleep(0.3)
+            time.sleep(0.5)
             pydirectinput.mouseDown(button="left")
             time.sleep(0.25)
             pydirectinput.mouseUp(button="left")
@@ -170,7 +174,7 @@ def handle_message(message):
         if msg == "use ability 3":
             text_to_speech("Initiating Ability Usage Sequence")
             HoldAndReleaseKey(E, 0.7)
-            time.sleep(0.3)
+            time.sleep(0.5)
             pydirectinput.mouseDown(button="left")
             time.sleep(0.25)
             pydirectinput.mouseUp(button="left")
@@ -203,7 +207,9 @@ def reload_paranoia(timer_duration):
     for i in range(20):
         time.sleep(timer_duration)
 
-        print("Reloading")
+        pydirectinput.mouseDown(button="left")
+        time.sleep(1)
+        pydirectinput.mouseUp(button="left")
         HoldAndReleaseKey(R, 0.7)
 
 dropbool = False
@@ -212,7 +218,7 @@ while True:
     active_tasks = [t for t in active_tasks if not t.done()]
 
     #Check for new messages
-    new_messages = t.twitch_receive_messages();
+    new_messages = t.twitch_receive_messages()
     if new_messages:
         message_queue += new_messages; # New messages are added to the back of the queue
         message_queue = message_queue[-MAX_QUEUE_LENGTH:] # Shorten the queue to only the most recent X messages
